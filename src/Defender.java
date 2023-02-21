@@ -3,7 +3,7 @@
 
 import java.awt.*;
 
-public class Cheese {
+public class Defender {
 
     //VARIABLE DECLARATION SECTION
     //Here's where you state which variables you are going to use.
@@ -23,14 +23,14 @@ public class Cheese {
 
     //This is a constructor that takes 3 parameters.  This allows us to specify the object's name and position when we build it.
     // if you put in a String, an int and an int the program will use this constructor instead of the one above.
-    public Cheese(int pXpos, int pYpos) {
+    public Defender(int pXpos, int pYpos) {
 
         xpos = pXpos;
         ypos = pYpos;
-        width = 50;
-        height = 50;
-        dx = 5;
-        dy = -5;
+        width = 75;
+        height = 75;
+        dx = -5;
+        dy = 0;
         isAlive = true;
         hits = 0;
         rec = new Rectangle(xpos, ypos, width, height);
@@ -39,12 +39,12 @@ public class Cheese {
     } // constructor
 
 
-    public Cheese(int pXpos, int pYpos, int dxParameter, int dyParameter, Image picParameter) {
+    public Defender(int pXpos, int pYpos, int dxParameter, int dyParameter, Image picParameter) {
 
         xpos = pXpos;
         ypos = pYpos;
-        width = 50;
-        height = 50;
+        width = 75;
+        height = 75;
         dx = dxParameter;
         dy = dyParameter;
         pic = picParameter;
@@ -61,12 +61,9 @@ public class Cheese {
         xpos = xpos + dx;
         ypos = ypos + dy;
 
-        if (xpos > 1000 - width || xpos < 0) {
-            dx = -dx;
-        }
-
-        if (ypos < 0 || ypos + height > 700) {
-            dy = -dy;
+        if (xpos < -100) {
+            xpos = (int)(Math.random()*100)+1100;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
         }
 
         rec = new Rectangle(xpos, ypos, width, height);

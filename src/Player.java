@@ -25,8 +25,8 @@ public class Player {
 
         xpos = pXpos;
         ypos = pYpos;
-        width = 100;
-        height = 100;
+        width = 75;
+        height = 75;
         dx = dxParameter;
         dy = dyParameter;
         pic = picParameter;
@@ -41,17 +41,17 @@ public class Player {
         ypos = ypos + dy;
 
         if(right == true){
-           dx = 2;
+           dx = 20;
         } else if (left == true) {
-            dx = -2;
+            dx = -20;
         } else { // (right == false && left == false)
             dx = 0;
         }
 
         if(down == true){
-            dy = 2;
+            dy = 20;
         } else if (up == true) {
-            dy = -2;
+            dy = -20;
         } else {
             dy = 0;
         }
@@ -62,8 +62,8 @@ public class Player {
         if(xpos < 0) { // left
             xpos = 0;
         }
-        if(ypos>650-height){ // down
-            ypos = 650-height;
+        if(ypos>600-height){ // down
+            ypos = 600-height;
         }
         if(ypos < 0) { // up
             ypos = 0;

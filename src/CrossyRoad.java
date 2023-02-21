@@ -20,13 +20,13 @@ import java.awt.event.*;
 /***
  * Step 1 for keyboard control - implements KeyListener
  */
-public class CheeseWorld implements Runnable, KeyListener {
+public class CrossyRoad implements Runnable, KeyListener {
 
     //Variable Definition Section
 
     //Sets the width and height of the program window
     final int WIDTH = 1000;
-    final int HEIGHT = 650;
+    public static int HEIGHT = 600;
 
     //Declare the variables needed for the graphics
     public JFrame frame;
@@ -35,26 +35,29 @@ public class CheeseWorld implements Runnable, KeyListener {
     public BufferStrategy bufferStrategy;
 
     //Declare the variables needed for images
-    public Image cheesePic;
+    public Image defenderPic;
     public Image mousePic;
-    public Image tomPic;
+    public Image offenderPic;
+    public Image backgroundPic;
 
     //Declare the character objects
     public Mouse mouse1;
-    public Cheese theCheese;
+    public Defender theDefender;
+    public Defender[] defenders;
     public Player user;
+    public boolean isMoving;
 
     // Main method definition
     // This is the code that runs first and automatically
     public static void main(String[] args) {
-        CheeseWorld myApp = new CheeseWorld();   //creates a new instance of the game
+        CrossyRoad myApp = new CrossyRoad();   //creates a new instance of the game
         new Thread(myApp).start();               //creates a threads & starts up the code in the run( ) method
     }
 
     // Constructor Method - setup portion of the program
     // Initialize your variables and construct your program objects here.
-    public CheeseWorld() {
-
+    public CrossyRoad() {
+        defenders = new Defender[3];
         setUpGraphics();
 
         /***
@@ -63,14 +66,19 @@ public class CheeseWorld implements Runnable, KeyListener {
         canvas.addKeyListener(this);
 
         //load images
-        cheesePic = Toolkit.getDefaultToolkit().getImage("cheese.gif");
+        backgroundPic = Toolkit.getDefaultToolkit().getImage("football field.jpg");
+        defenderPic = Toolkit.getDefaultToolkit().getImage("defense.png");
         mousePic = Toolkit.getDefaultToolkit().getImage("jerry.gif");
-        tomPic = Toolkit.getDefaultToolkit().getImage("tomCat.png");
+        offenderPic = Toolkit.getDefaultToolkit().getImage("offense.png");
 
         //create (construct) the objects needed for the game
-        mouse1 = new Mouse(200, 300, 4, 4, mousePic);
-        theCheese = new Cheese(400, 300, 3, -4, cheesePic);
-        user = new Player(250, 250, 0, 0, tomPic);
+        mouse1 = new Mouse(200, 300, 2, 0, mousePic);
+        theDefender = new Defender(400, 300, -5, 0, defenderPic);
+        defenders[0] = new Defender(400, 300, -5, 0, defenderPic);
+        defenders[1] = new Defender(400, 300, -5, 0, defenderPic);
+        defenders[2] = new Defender(400, 300, -5, 0, defenderPic);
+
+        user = new Player(0, 250, 0, 0, offenderPic);
 
     } // CheeseWorld()
 
@@ -82,8 +90,17 @@ public class CheeseWorld implements Runnable, KeyListener {
     // this is the code that plays the game after you set things up
     public void moveThings() {
         mouse1.move();
-        theCheese.move();
+        theDefender.move();
+        for (Defender d:defenders) {
+            d.move();
+        }
         user.move();
+        if(user.xpos>900){
+            theDefender.dx = (-theDefender.dx) - 1;
+        }
+        if(user.xpos<25){
+            theDefender.dx = -(theDefender.dx) + 1;
+        }
     }
 
     public void checkIntersections() {
@@ -105,8 +122,12 @@ public class CheeseWorld implements Runnable, KeyListener {
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
         //draw characters to the screen
+        g.drawImage(backgroundPic,0,0,WIDTH,HEIGHT,null);
         g.drawImage(mouse1.pic, mouse1.xpos, mouse1.ypos, mouse1.width, mouse1.height, null);
-        g.drawImage(theCheese.pic, theCheese.xpos, theCheese.ypos, theCheese.width, theCheese.height, null);
+        g.drawImage(theDefender.pic, theDefender.xpos, theDefender.ypos, theDefender.width, theDefender.height, null);
+        for (Defender d:defenders) {
+            g.drawImage(d.pic, d.xpos, d.ypos, d.width, d.height, null);
+        }
         g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
 
         g.dispose();
@@ -124,20 +145,24 @@ public class CheeseWorld implements Runnable, KeyListener {
         int keyCode = event.getKeyCode();  //gets the keyCode (an integer) of the key pressed
         System.out.println("Key Pressed: " + key + "  Code: " + keyCode);
 
-        if (keyCode == 68) { // d
-            user.right = true;
+        if (keyCode == 68 && isMoving == false) { // d
+            user.xpos =user.xpos+50 ;
+            isMoving = true;
         }
-        if (keyCode == 65) { // a
-            user.left = true;
+        if (keyCode == 65 && isMoving == false) { // a
+            user.xpos = user.xpos-50;
+            isMoving = true;
         }
 //        if (keyCode == 32) { // space bar
 //            user.dy = -15;
 //        }
-        if (keyCode == 83) { // s
-            user.down = true;
+        if (keyCode == 83 && isMoving == false) { // s
+            user.ypos = user.ypos+50;
+            isMoving = true;
         }
-        if (keyCode == 87) { // w
-            user.up = true;
+        if (keyCode == 87 && isMoving == false) { // w
+            user.ypos = user.ypos-50;
+            isMoving = true;
         }
     }//keyPressed()
 
@@ -147,15 +172,19 @@ public class CheeseWorld implements Runnable, KeyListener {
         //This method will do something when a key is released
         if (keyCode == 68) { // d
             user.right = false;
+            isMoving = false;
         }
         if (keyCode == 65) { // a
             user.left = false;
+            isMoving = false;
         }
         if (keyCode == 83) { // s
             user.down = false;
+            isMoving = false;
         }
         if (keyCode == 87) { // w
             user.up = false;
+            isMoving = false;
         }
 
     }//keyReleased()
