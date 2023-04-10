@@ -71,7 +71,7 @@ public class Player {
 
 
         //always put this after you've done all the changing of the xpos and ypos values
-        rec = new Rectangle(xpos, ypos, width, height);
+        rec = new Rectangle(xpos+30, ypos+30, width-60, height-60);
 
     }
 

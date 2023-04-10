@@ -12,6 +12,7 @@ public class Defender {
     public int ypos;                //the y position
     public int width;
     public int height;
+    public boolean movingLeft;
     public boolean isAlive;            //a boolean to denote if the hero is alive or dead.
     public int dx;                    //the speed of the hero in the x direction
     public int dy;                    //the speed of the hero in the y direction
@@ -32,6 +33,7 @@ public class Defender {
         dx = -5;
         dy = 0;
         isAlive = true;
+        movingLeft=true;
         hits = 0;
         rec = new Rectangle(xpos, ypos, width, height);
 
@@ -57,19 +59,54 @@ public class Defender {
 
 
     //The move method.  Everytime this is run (or "called") the hero's x position and y position change by dx and dy
-    public void move() {
-        xpos = xpos + dx;
+    public void moveLeft() {
+        xpos = xpos - dx;
         ypos = ypos + dy;
 
         if (xpos < -100) {
-            xpos = (int)(Math.random()*100)+1100;
+            xpos = (int)(Math.random()*100)+1000;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
+        }
+        if (xpos > 1100) {
+            xpos = (int)(Math.random()*100)*-1;
             ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
         }
 
         rec = new Rectangle(xpos, ypos, width, height);
 
     }
+    public void moveRight() {
+        xpos = xpos + dx;
+        ypos = ypos + dy;
 
+        if (xpos < -100) {
+            xpos = (int)(Math.random()*100)+1000;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
+        }
+        if (xpos > 1100) {
+            xpos = (int)(Math.random()*100)*-1;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
+        }
+
+        rec = new Rectangle(xpos, ypos, width, height);
+
+    }
+    public void move(){
+        if(movingLeft){
+        xpos = xpos - dx;
+        ypos = ypos + dy;}else{xpos = xpos + dx;}
+        if (xpos < -100) {
+            xpos = (int)(Math.random()*100)+1000;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
+        }
+        if (xpos > 1100) {
+            xpos = (int)(Math.random()*100)*-1;
+            ypos = (int)(Math.random()*(CrossyRoad.HEIGHT-height));
+        }
+
+        rec = new Rectangle(xpos, ypos, width, height);
+
+    }
 
 } //end of the Cheese object class  definition
 

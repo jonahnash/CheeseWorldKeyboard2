@@ -16,6 +16,7 @@ import javax.swing.*;
  * Step 0 for keyboard control - Import
  */
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /***
  * Step 1 for keyboard control - implements KeyListener
@@ -36,16 +37,24 @@ public class CrossyRoad implements Runnable, KeyListener {
 
     //Declare the variables needed for images
     public Image defenderPic;
-    public Image mousePic;
+    //public Image mousePic;
     public Image offenderPic;
     public Image backgroundPic;
+    public Image introPic;
 
     //Declare the character objects
-    public Mouse mouse1;
-    public Defender theDefender;
-    public Defender[] defenders;
+    //public Mouse mouse1;
+    //public Defender theDefender;
+    public ArrayList<Defender> defenders;
     public Player user;
     public boolean isMoving;
+    public boolean inLeftEndzone;
+    public boolean inRightEndzone;
+    public boolean direction;
+    public boolean gamePlaying = false;
+    public boolean gameOver = false;
+    public boolean newDefender = false;
+    public int counter;
 
     // Main method definition
     // This is the code that runs first and automatically
@@ -57,7 +66,6 @@ public class CrossyRoad implements Runnable, KeyListener {
     // Constructor Method - setup portion of the program
     // Initialize your variables and construct your program objects here.
     public CrossyRoad() {
-        defenders = new Defender[3];
         setUpGraphics();
 
         /***
@@ -68,17 +76,20 @@ public class CrossyRoad implements Runnable, KeyListener {
         //load images
         backgroundPic = Toolkit.getDefaultToolkit().getImage("football field.jpg");
         defenderPic = Toolkit.getDefaultToolkit().getImage("defense.png");
-        mousePic = Toolkit.getDefaultToolkit().getImage("jerry.gif");
+        //mousePic = Toolkit.getDefaultToolkit().getImage("jerry.gif");
         offenderPic = Toolkit.getDefaultToolkit().getImage("offense.png");
+        introPic = Toolkit.getDefaultToolkit().getImage("spacebartostart.jpg");
+
+        defenders = new ArrayList<Defender>();
+        defenders.add(new Defender(800,300,-5,0,defenderPic));
 
         //create (construct) the objects needed for the game
-        mouse1 = new Mouse(200, 300, 2, 0, mousePic);
-        theDefender = new Defender(400, 300, -5, 0, defenderPic);
-        defenders[0] = new Defender(400, 300, -5, 0, defenderPic);
-        defenders[1] = new Defender(400, 300, -5, 0, defenderPic);
-        defenders[2] = new Defender(400, 300, -5, 0, defenderPic);
-
-        user = new Player(0, 250, 0, 0, offenderPic);
+        //mouse1 = new Mouse(200, 300, 2, 0, mousePic);
+       // theDefender = new Defender(400, 300, -5, 0, defenderPic);
+//        for(int d=0; d<defenders.length; d++){
+//            defenders[d] = new Defender(400,300,-5,0,defenderPic);
+//        }
+        user = new Player(75, 250, 0, 0, offenderPic);
 
     } // CheeseWorld()
 
@@ -89,27 +100,93 @@ public class CrossyRoad implements Runnable, KeyListener {
     // main thread
     // this is the code that plays the game after you set things up
     public void moveThings() {
-        mouse1.move();
-        theDefender.move();
-        for (Defender d:defenders) {
-            d.move();
-        }
+        //mouse1.move();
+        //theDefender.move();
         user.move();
-        if(user.xpos>900){
-            theDefender.dx = (-theDefender.dx) - 1;
+        if(counter%4==0 && newDefender == false){
+            System.out.println(counter);
+            defenders.add(new Defender(800,300,-5,0,defenderPic));
+            newDefender = true;
         }
-        if(user.xpos<25){
-            theDefender.dx = -(theDefender.dx) + 1;
+        if(counter%4==1){
+            newDefender = false;
         }
+        for(int d=0;d< defenders.size();d++){
+            defenders.get(d).move();//MS. L addedthis
+           /* if(direction){
+               defenders.get(d).moveLeft();
+            }
+            else{
+                defenders.get(d).moveRight();
+            }*/
+            if(user.xpos<25 && direction==true){
+                direction=false;
+                defenders.get(d).movingLeft=false;
+                defenders.get(d).dx--;
+                //defenders.get(d).dx = defenders.get(d).dx - 1;
+                System.out.println(defenders.get(d).dx);
+                counter = counter + 1;
+            }
+            if(user.xpos>900 && direction==false){
+                direction=true;
+                defenders.get(d).movingLeft=true;
+                defenders.get(d).dx--;
+
+                // defenders.get(d).dx = defenders.get(d).dx - 1;
+                System.out.println(defenders.get(d).dx);
+                counter = counter + 1;
+            }
+        }
+
+//        for(int d=0;d<defenders.length;d++){
+//            if(user.xpos>900 && inEndzone==false){
+//                inEndzone = true;
+//                defenders[d].move2();
+//                System.out.print("test"+ defenders[d].dx);
+//            }
+//
+//        }
+//        for(int d=0;d<defenders.length;d++){
+//            // defenders[d].move();
+//            if(user.xpos>900 && inEndzone==false){
+//                defenders[d].dx = -1*(defenders[d].dx) + 1;
+//                inEndzone = true;
+//                System.out.print("test");
+//            }
+//            if(user.xpos<25 && inEndzone==false){
+//                defenders[d].dx = -1*(defenders[d].dx) - 1;
+//                inEndzone = true;
+//            }
+//            if(user.xpos>25 && user.xpos<900){
+//                inEndzone = false;
+//            }
+//        }
+//        if(user.xpos>900 && inEndzone==false){
+//            //theDefender.dx = -(theDefender.dx) + 1;
+//            inEndzone = true;
+//        }
+//        if(user.xpos<25 && inEndzone==false){
+//            //theDefender.dx = -(theDefender.dx) - 1;
+//            inEndzone = true;
+//        }
+//        if(user.xpos>25 && user.xpos<900){
+//            inEndzone = false;
+//        }
     }
 
     public void checkIntersections() {
-
+        for(int d=0; d<defenders.size(); d++){
+            if(user.rec.intersects(defenders.get(d).rec)){
+                gameOver = true;
+            }
+        }
     }
 
     public void run() {
         while (true) {
-            moveThings();           //move all the game objects
+            if(gamePlaying){
+                moveThings();           //move all the game objects
+            }
             checkIntersections();   // check character crashes
             render();               // paint the graphics
             pause(20);         // sleep for 20 ms
@@ -121,14 +198,36 @@ public class CrossyRoad implements Runnable, KeyListener {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
+
         //draw characters to the screen
-        g.drawImage(backgroundPic,0,0,WIDTH,HEIGHT,null);
-        g.drawImage(mouse1.pic, mouse1.xpos, mouse1.ypos, mouse1.width, mouse1.height, null);
-        g.drawImage(theDefender.pic, theDefender.xpos, theDefender.ypos, theDefender.width, theDefender.height, null);
-        for (Defender d:defenders) {
-            g.drawImage(d.pic, d.xpos, d.ypos, d.width, d.height, null);
+        if(gamePlaying == false && gameOver == false){
+            //start screen
+            g.drawImage(introPic,0,-100,WIDTH,HEIGHT+200,null);
         }
-        g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
+        if(gamePlaying == true && gameOver == false){
+            g.drawImage(backgroundPic,0,0,WIDTH,HEIGHT,null);
+            //g.drawImage(mouse1.pic, mouse1.xpos, mouse1.ypos, mouse1.width, mouse1.height, null);
+//        g.drawImage(theDefender.pic, theDefender.xpos, theDefender.ypos, theDefender.width, theDefender.height, null);
+            for(int d=0; d<defenders.size(); d++){
+                g.drawImage(defenders.get(d).pic,defenders.get(d).xpos,defenders.get(d).ypos,defenders.get(d).width,defenders.get(d).height,null);
+            }
+            g.drawImage(user.pic, user.xpos, user.ypos, user.width, user.height, null);
+            //scoreboard
+            g.setColor(Color.yellow);
+            g.fillRect(15,20, 65,30);
+            g.fillRect(WIDTH-77,20,65,30);
+            g.setColor(Color.BLACK);
+            g.drawString("Score: " + counter,25,40);
+            g.drawString("Score: " + counter, WIDTH-67,40);
+        }
+        if(gameOver==true){
+            g.drawImage(backgroundPic,0,0,WIDTH,HEIGHT,null);
+            g.setColor(Color.yellow);
+            g.fillRect((WIDTH/2)-48,(HEIGHT/2)-35,100,70);
+            g.setColor(Color.BLACK);
+            g.drawString("GAME OVER", (WIDTH/2)-35,(HEIGHT/2)-10);
+            g.drawString("Score: " + counter,(WIDTH/2)-22,(HEIGHT/2)+17);
+        }
 
         g.dispose();
         bufferStrategy.show();
@@ -163,6 +262,9 @@ public class CrossyRoad implements Runnable, KeyListener {
         if (keyCode == 87 && isMoving == false) { // w
             user.ypos = user.ypos-50;
             isMoving = true;
+        }
+        if (keyCode == 32){
+            gamePlaying = true;
         }
     }//keyPressed()
 
