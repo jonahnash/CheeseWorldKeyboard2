@@ -121,16 +121,20 @@ public class CrossyRoad implements Runnable, KeyListener {
             }*/
             if(user.xpos<25 && direction==true){
                 direction=false;
-                defenders.get(d).movingLeft=false;
-                defenders.get(d).dx--;
+                for(int t=0;t<defenders.size();t++) {
+                    defenders.get(t).movingLeft = false;
+                    defenders.get(t).dx--;
+                }
                 //defenders.get(d).dx = defenders.get(d).dx - 1;
                 System.out.println(defenders.get(d).dx);
                 counter = counter + 1;
             }
             if(user.xpos>900 && direction==false){
                 direction=true;
-                defenders.get(d).movingLeft=true;
-                defenders.get(d).dx--;
+                for(int t=0;t<defenders.size();t++) {
+                    defenders.get(t).movingLeft = true;
+                    defenders.get(t).dx--;
+                }
 
                 // defenders.get(d).dx = defenders.get(d).dx - 1;
                 System.out.println(defenders.get(d).dx);
